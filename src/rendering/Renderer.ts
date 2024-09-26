@@ -14,7 +14,9 @@ export class Renderer {
         this.scene = scene;
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        if (!this.renderer.xr.isPresenting) {
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+        }
         document.body.appendChild(this.renderer.domElement);
 
         this.postProcessing = new PostProcessing(this.renderer, this.scene, this.camera);
@@ -40,9 +42,16 @@ export class Renderer {
             this.camera.aspect = aspect;
             this.camera.updateProjectionMatrix();
         }
-    
-        //FORGETTING THIS IS REALLY BAD LOL
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.postProcessing.setSize(window.innerWidth, window.innerHeight);
+
+        if (!this.renderer.xr.isPresenting) {
+            //FORGETTING THIS IS REALLY BAD LOL
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            
+        }
+
+        if(this.postProcessing) {
+            this.postProcessing.setSize(window.innerWidth, window.innerHeight);
+        }
+        
     };
 }
