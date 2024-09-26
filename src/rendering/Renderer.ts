@@ -28,12 +28,17 @@ export class Renderer {
     }
 
     render() {
-        this.postProcessing.render();
+        //VR doesnt like post processing
+        if (this.renderer.xr.isPresenting) {
+            this.renderer.render(this.scene, this.camera);
+        } else {
+            this.postProcessing.render();
+        }
     }
 
     private onWindowResize = () => {
         const aspect = window.innerWidth / window.innerHeight;
-    
+        
         if (this.camera instanceof THREE.OrthographicCamera) {
             this.camera.left = -this.camera.top * aspect;
             this.camera.right = this.camera.top * aspect;
@@ -46,12 +51,12 @@ export class Renderer {
         if (!this.renderer.xr.isPresenting) {
             //FORGETTING THIS IS REALLY BAD LOL
             this.renderer.setSize(window.innerWidth, window.innerHeight);
-            
+
         }
 
-        if(this.postProcessing) {
+        if (this.postProcessing) {
             this.postProcessing.setSize(window.innerWidth, window.innerHeight);
         }
-        
+
     };
 }
