@@ -1,23 +1,32 @@
 // src/rendering/Renderer.ts
 import * as THREE from 'three';
 import { Camera } from './Camera';
+import { PostProcessing } from './PostProcessing';
+import { VRButton } from 'three/examples/jsm/webxr/VRButton';
 
 export class Renderer {
     public renderer: THREE.WebGLRenderer;
-    public camera: THREE.OrthographicCamera | THREE.PerspectiveCamera;
+    private camera: THREE.OrthographicCamera | THREE.PerspectiveCamera;
+    private scene: THREE.Scene;
+    private postProcessing: PostProcessing;
+    constructor(scene: THREE.Scene, camera: THREE.OrthographicCamera | THREE.PerspectiveCamera) {
+        this.camera = camera;
+        this.scene = scene;
 
-    constructor() {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.camera = new Camera().camera;
-
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
+
+        this.postProcessing = new PostProcessing(this.renderer, this.scene, this.camera);
+
+        this.renderer.xr.enabled = true;
+        document.body.appendChild(VRButton.createButton(this.renderer));
 
         window.addEventListener('resize', this.onWindowResize, false);
     }
 
-    render(scene: THREE.Scene, camera: THREE.Camera) {
-        this.renderer.render(scene, camera);
+    render() {
+        this.postProcessing.render();
     }
 
     private onWindowResize = () => {
@@ -34,5 +43,6 @@ export class Renderer {
     
         //FORGETTING THIS IS REALLY BAD LOL
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.postProcessing.setSize(window.innerWidth, window.innerHeight);
     };
 }

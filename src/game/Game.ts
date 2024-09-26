@@ -33,10 +33,9 @@ export class Game {
     private performanceMonitor: PerformanceMonitor;
 
     constructor() {
-        this.renderer = new Renderer();
         this.camera = new Camera();
-        this.renderer.camera = this.camera.camera;
         this.scene = new Scene();
+        this.renderer = new Renderer(this.scene.scene, this.camera.camera);
         this.inputManager = new InputManager();
         this.playerMovementSystem = new PlayerMovementSystem(this.inputManager);
 
@@ -71,13 +70,11 @@ export class Game {
     }
 
     start() {
-        this.animate();
+        this.renderer.renderer.setAnimationLoop(this.animate);
     }
 
     private animate = () => {
         this.performanceMonitor.begin();
-
-        requestAnimationFrame(this.animate);
 
         const currentTime = performance.now();
         const deltaTime = (currentTime - this.lastFrameTime) / 1000;
@@ -86,7 +83,7 @@ export class Game {
         this.inputManager.updateGamepads()
 
         this.player.update(deltaTime);
-        this.playerMovementSystem.update(this.player, deltaTime, this.renderer.camera);
+        this.playerMovementSystem.update(this.player, deltaTime, this.camera.camera);
 
         if (this.inputManager.isMouseButtonPressed(0)) {
             if (this.player.shoot()) {
@@ -106,7 +103,7 @@ export class Game {
             (this.inputManager.mousePosition.x / window.innerWidth) * 2 - 1,
             -(this.inputManager.mousePosition.y / window.innerHeight) * 2 + 1
         );
-        this.mouseWorldPosition = getMouseWorldPosition(mouseNDC, this.renderer.camera);
+        this.mouseWorldPosition = getMouseWorldPosition(mouseNDC, this.camera.camera);
 
         this.projectileSystem.update(deltaTime);
 
@@ -119,7 +116,7 @@ export class Game {
         this.enemyBoidsSystem.update(deltaTime);
         this.collisionSystem.update(deltaTime);
 
-        this.renderer.render(this.scene.scene, this.renderer.camera);
+        this.renderer.render();
 
         this.performanceMonitor.end();
     };
@@ -151,7 +148,7 @@ export class Game {
     private createProjectile(): Projectile {
         const position = this.player.mesh.position.clone();
 
-        //i have no fuckign clue how to use quaternions
+        //i have no clue how to use quaternions
         const direction = new THREE.Vector3(0, 0, 1);
         direction.applyQuaternion(this.player.mesh.quaternion);
 
