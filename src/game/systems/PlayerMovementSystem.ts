@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 export class PlayerMovementSystem {
     private acceleration: number = 200; //ups^2
-    private maxSpeed: number = 100;     //ups
+    private maxSpeed: number = 150;     //ups
     private inputManager: InputManager;
 
     constructor(inputManager: InputManager) {
@@ -40,8 +40,13 @@ export class PlayerMovementSystem {
 
         player.mesh.position.addScaledVector(player.velocity, deltaTime);
 
-        const damping = Math.exp(-5 * deltaTime);
-        player.velocity.multiplyScalar(damping);
+        const damping = Math.exp(-3 * deltaTime);
+
+        //testing "jumping" (no ground friction in air)
+        if (!this.inputManager.isKeyPressed(' ')) {
+            player.velocity.multiplyScalar(damping);
+        }
+        
 
         this.updatePlayerRotation(player, camera);
     }
@@ -66,6 +71,7 @@ export class PlayerMovementSystem {
         player.torch.target.position.copy(mousePositionInWorld);
 
     }
+
 
     
 

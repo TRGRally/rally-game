@@ -22,7 +22,7 @@ export class Projectile {
 
         const light = new THREE.PointLight(Colors.BulletEmissive, 8, 15, 0.75);
         light.position.set(0, 0, 0);
-        this.mesh.add(light);
+        //this.mesh.add(light);
 
         this.mesh.position.copy(position);
         this.velocity = direction.clone().normalize().multiplyScalar(speed);

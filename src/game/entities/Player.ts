@@ -12,13 +12,14 @@ export class Player {
     public canShoot: boolean;
     public shootCooldown: number;
     public shootTimer: number;
+    public onGround: boolean = false;
 
     constructor() {
         const geometry = new THREE.CylinderGeometry(this.size, this.size, 10);
         const material = new THREE.MeshStandardMaterial({
             color: Colors.PlayerBase,
-            // emissive: Colors.PlayerEmissive,
-            // emissiveIntensity: 0.5
+            emissive: Colors.PlayerEmissive,
+            emissiveIntensity: 0.5
         });
         this.mesh = new THREE.Mesh(geometry, material);
 
@@ -63,6 +64,5 @@ export class Player {
 
     log() {
         console.table(this.mesh.position);
-        console.table(this.light.position)
     }
 }

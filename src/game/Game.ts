@@ -84,6 +84,7 @@ export class Game {
 
         this.player.update(deltaTime);
         this.playerMovementSystem.update(this.player, deltaTime, this.camera.camera);
+        console.log(this.player.velocity.length());
 
         if (this.inputManager.isMouseButtonPressed(0)) {
             if (this.player.shoot()) {
